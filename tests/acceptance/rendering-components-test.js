@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { module, test } from 'qunit';
 import startApp from '../helpers/start-app';
+import { click, find, findAll } from 'ember-native-dom-helpers';
 
 var application;
 
@@ -23,43 +24,33 @@ module('Acceptance: Rendering Components', {
   }
 });
 
-test('rendering a component with an attribute', function(assert) {
+test('rendering a component with an attribute', async function(assert) {
   assert.expect(2);
-  visit('/');
+  await visit('/');
 
-  andThen(function() {
-    assert.equal(find('p:contains(top level component)').length, 1, "The top level component was rendered");
-    assert.equal(find('#component-title:contains(Component Title)').length, 1, "Passed in attributes can be used");
-  });
+  assert.equal(find('.top-level-component p').innerHTML, 'top level component', "The top level component was rendered");
+  assert.equal(find('#component-title').innerHTML, 'Component Title', "Passed in attributes can be used");
 });
 
-test('using component events', function(assert) {
+test('using component events', async function(assert) {
   assert.expect(2);
-  visit('/');
+  await visit('/');
 
-  andThen(function() {
-    assert.equal(find("#expanded-content").length, 0, "Expanded content is hidden at first");
-  });
+  assert.equal(findAll("#expanded-content").length, 0, "Expanded content is hidden at first");
 
-  click('#toggle-expanded');
+  await click('#toggle-expanded');
 
-  andThen(function() {
-    assert.equal(find("#expanded-content").length, 1, "The expanded content is showing");
-  });
+  assert.equal(findAll("#expanded-content").length, 1, "The expanded content is showing");
 });
 
-test('using nested components', function(assert) {
+test('using nested components', async function(assert) {
   assert.expect(3);
-  visit('/');
+  await visit('/');
 
-  andThen(function() {
-    assert.equal(find('p:contains(A nested component)').length, 1, "The nested component was rendered");
-    assert.equal(find("#expanded-content").length, 0, "Expanded content is hidden at first");
-  });
+  assert.equal(find('.nested-component p').innerHTML, 'A nested component', "The nested component was rendered");
+  assert.equal(findAll("#expanded-content").length, 0, "Expanded content is hidden at first");
 
-  click('#nested-component-toggle-expanded');
+  await click('#nested-component-toggle-expanded');
 
-  andThen(function() {
-    assert.equal(find("#expanded-content").length, 1, "The expanded content is showing");
-  });
+  assert.equal(findAll("#expanded-content").length, 1, "The expanded content is showing");
 });

@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { module, test } from 'qunit';
 import startApp from '../helpers/start-app';
+import { find } from 'ember-native-dom-helpers';
 
 let application, originalAssert, originalError, errors;
 
@@ -42,7 +43,7 @@ test('rendering the found component', function(assert) {
   visit('/');
 
   andThen(function() {
-    assert.equal(find('p:contains(top level component)').length, 1, "The top level component was rendered");
+    assert.equal(find('.top-level-component p').innerHTML, 'top level component', "The top level component was rendered");
     assert.deepEqual(errors, [`ember-islands could not find a component named "oops-not-component" in your Ember application.`], 'Logs an error');
   });
 });

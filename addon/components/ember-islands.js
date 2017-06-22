@@ -1,5 +1,5 @@
 import Ember from 'ember';
-const { $, Component, getOwner, Logger } = Ember;
+const { Component, getOwner, Logger } = Ember;
 
 export default Ember.Component.extend({
   tagName: '',
@@ -52,7 +52,7 @@ function getRenderComponentFor(emberObject) {
       attrs.layout = layout;
     }
 
-    $(element).empty();
+    element.innerHTML = '';
     let componentInstance = component.create(attrs);
     componentInstance.appendTo(element);
     return componentInstance;
@@ -61,11 +61,12 @@ function getRenderComponentFor(emberObject) {
 
 function queryIslandComponents() {
   let components = [];
+  let nodes = document.querySelectorAll('[data-component]');
 
-  $('[data-component]').each(function() {
-    let name = this.getAttribute('data-component');
-    let attrs = componentAttributes(this);
-    components.push({ attrs, name, element: this });
+  toArray(nodes).forEach((element) => {
+    let name = element.getAttribute('data-component');
+    let attrs = componentAttributes(element);
+    components.push({ attrs, name, element });
   });
 
   return components;
@@ -93,4 +94,12 @@ function provideMissingComponentInProductionMode(owner, name) {
   Logger.error(missingComponentMessage(name));
 
   return lookupComponent(owner, 'ember-islands/missing-component');
+}
+
+function toArray(nodelist) {
+  let array = new Array(nodelist.length);
+  for (let i = 0; i < nodelist.length; i++) {
+    array[i] = nodelist[i];
+  }
+  return array;
 }
